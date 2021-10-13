@@ -1,0 +1,26 @@
+name: 'Custom Github Action test'
+description: 'Publishes a project to NuGet'
+inputs:
+  project_path:
+    required: true
+  package_name:
+    required: true
+  api_key:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+
+    - name: Build and Test
+    - uses: ./actions/build-and-test
+      with:
+        project_path: ${{ inputs.project_path }}
+        package_name: ${{ inputs.package_name }}
+
+    - name: Pack NuGet package
+      run: dotnet pack --no-build --include-symbols -p:SymbolPackageFormat=snupkg -c Release ${{ inputs.project_path }} -o .
+    - name: Push NuGet package
+      run: dotnet nuget push ${{ inputs.package_name }}*.nupkg -k ${{ inputs.api_key }} -s https://api.nuget.org/v3/index.json
+    - name: Tag commit
+      run: ./scripts/tag-commit.sh ${{ inputs.project_path }}
