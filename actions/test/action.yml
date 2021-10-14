@@ -2,6 +2,8 @@ name: 'Test'
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v2
+
     - name: Test
       run: echo "Test"
       shell: bash
