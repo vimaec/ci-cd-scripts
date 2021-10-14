@@ -5,6 +5,9 @@ inputs:
     required: true
   package_name:
     required: true
+  root_path:
+    required: false
+    default: "."
 runs:
   using: "composite"
   steps:
@@ -19,7 +22,7 @@ runs:
       run: sudo apt install nuget
       shell: bash
     - name: Check version
-      run: ./scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }}
+      run: ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }}
       shell: bash
 
     - name: Restore dependencies

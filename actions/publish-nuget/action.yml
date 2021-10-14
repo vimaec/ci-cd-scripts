@@ -7,6 +7,9 @@ inputs:
     required: true
   api_key:
     required: true
+  root_path:
+    required: false
+    default: "."
 runs:
   using: "composite"
   steps:
@@ -17,10 +20,14 @@ runs:
       with:
         project_path: ${{ inputs.project_path }}
         package_name: ${{ inputs.package_name }}
+        root_path: ${{ inputs.root_path }}
 
     - name: Pack NuGet package
       run: dotnet pack --no-build --include-symbols -p:SymbolPackageFormat=snupkg -c Release ${{ inputs.project_path }} -o .
+      shell: bash
     - name: Push NuGet package
       run: dotnet nuget push ${{ inputs.package_name }}*.nupkg -k ${{ inputs.api_key }} -s https://api.nuget.org/v3/index.json
+      shell: bash
     - name: Tag commit
-      run: ./scripts/tag-commit.sh ${{ inputs.project_path }}
+      run: ${{ inputs.root_path }}/scripts/tag-commit.sh ${{ inputs.project_path }}
+      shell: bash
