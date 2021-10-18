@@ -1,25 +1,38 @@
 name: 'Build and Test'
-description: "Builds and tests a VIM project"
+description: 'Builds and tests a VIM project'
 inputs:
   project_path:
+    description: 'The path to the .csproj file'
     required: true
   package_name:
-    required: true
+    description: 'The project name used for publishing (for checking version uniqueness)'
+    required: false
+    default: ''
+  root_path:
+    description: 'The root path where this repository is checked out'
+    required: false
+    default: '.'
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
 
     - name: Install additional tools
-      run: sudo apt install nuget
+      # composite actions don't support if-statements yet
+      run: |
+        ! [[ "${{ inputs.package_name }}" == "" ]] && \
+        sudo apt install nuget \
+        || true
       shell: bash
     - name: Check version
-      run: ./scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }}
+      # composite actions don't support if-statements yet
+      run:  |
+        ! [[ "${{ inputs.package_name }}" == "" ]] && \
+        ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }} \
+        || true
       shell: bash
 
     - name: Restore dependencies

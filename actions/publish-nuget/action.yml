@@ -1,26 +1,35 @@
-name: 'Custom Github Action test'
-description: 'Publishes a project to NuGet'
+name: 'Publish to NuGet'
+description: 'Publishes a VIM project to NuGet.org'
 inputs:
   project_path:
+    description: 'The path to the .csproj file'
     required: true
   package_name:
+    description: 'The project name used for publishing'
     required: true
   api_key:
+    description: 'The API key for publishing to NuGet'
     required: true
+  root_path:
+    description: 'The root path where this repository is checked out'
+    required: false
+    default: "."
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
-
     - name: Build and Test
-    - uses: ./actions/build-and-test
+      uses: ${{ inputs.root_path }}/actions/build-and-test
       with:
         project_path: ${{ inputs.project_path }}
         package_name: ${{ inputs.package_name }}
+        root_path: ${{ inputs.root_path }}
 
     - name: Pack NuGet package
       run: dotnet pack --no-build --include-symbols -p:SymbolPackageFormat=snupkg -c Release ${{ inputs.project_path }} -o .
+      shell: bash
     - name: Push NuGet package
       run: dotnet nuget push ${{ inputs.package_name }}*.nupkg -k ${{ inputs.api_key }} -s https://api.nuget.org/v3/index.json
+      shell: bash
     - name: Tag commit
-      run: ./scripts/tag-commit.sh ${{ inputs.project_path }}
+      run: ${{ inputs.root_path }}/scripts/tag-commit.sh ${{ inputs.project_path }}
+      shell: bash
