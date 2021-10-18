@@ -16,14 +16,13 @@ fi
 
 echo "Project version is ${ver}. Checking NuGet versions..."
 
-nuget=`nuget list -AllVersions $2`
+versions=`nuget list -AllVersions -IncludeDelisted -NonInteractive PackageId:$2 | awk '{print $2}'`
 
-if [ "$nuget" = "No packages found." ]; then
+# `nuget list` returns "No packages found." message
+if [ "$versions" = "packages" ]; then
     echo "No versions found."
     exit 0
 fi
-
-versions=`echo $nuget | awk '{print $2}'`
 
 for nuget in $versions
 do
