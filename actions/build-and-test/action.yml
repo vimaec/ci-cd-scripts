@@ -24,13 +24,15 @@ runs:
       # composite actions don't support if-statements yet
       run: |
         ! [[ "${{ inputs.package_name }}" == "" ]] && \
-        sudo apt install nuget
+        sudo apt install nuget \
+        || true
       shell: bash
     - name: Check version
       # composite actions don't support if-statements yet
       run:  |
         ! [[ "${{ inputs.package_name }}" == "" ]] && \
-        ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }}
+        ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }} \
+        || true
       shell: bash
 
     - name: Restore dependencies
