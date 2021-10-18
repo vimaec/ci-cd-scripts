@@ -1,0 +1,25 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+      with:
+        repository: vimaec/ci-cd-scripts
+        ref: refs/heads/main
+        path: .github/
+    - uses: ./.github/actions/build-and-test
+      with:
+        project_path: << PROJECT_PATH >>
+        package_name: << PACKAGE_NAME >>
+        root_path: ".github"

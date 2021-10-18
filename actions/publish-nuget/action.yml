@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: Build and Test
-    - uses: ./actions/build-and-test
+      uses: ${{ inputs.root_path }}/actions/build-and-test
       with:
         project_path: ${{ inputs.project_path }}
         package_name: ${{ inputs.package_name }}
