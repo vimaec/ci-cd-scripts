@@ -1,13 +1,17 @@
-name: 'Custom Github Action test'
-description: 'Publishes a project to NuGet'
+name: 'Publish to NuGet'
+description: 'Publishes a VIM project to NuGet.org'
 inputs:
   project_path:
+    description: 'The path to the .csproj file'
     required: true
   package_name:
+    description: 'The project name used for publishing'
     required: true
   api_key:
+    description: 'The API key for publishing to NuGet'
     required: true
   root_path:
+    description: 'The root path where this repository is checked out'
     required: false
     default: "."
 runs:

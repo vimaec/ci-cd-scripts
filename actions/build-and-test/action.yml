@@ -1,13 +1,17 @@
 name: 'Build and Test'
-description: "Builds and tests a VIM project"
+description: 'Builds and tests a VIM project'
 inputs:
   project_path:
+    description: 'The path to the .csproj file'
     required: true
   package_name:
-    required: true
-  root_path:
+    description: 'The project name used for publishing (for checking version uniqueness)'
     required: false
-    default: "."
+    default: ''
+  root_path:
+    description: 'The root path where this repository is checked out'
+    required: false
+    default: '.'
 runs:
   using: "composite"
   steps:
@@ -17,9 +21,11 @@ runs:
         dotnet-version: 5.0.x
 
     - name: Install additional tools
+      if: ${{ inputs.package_name != '' }}
       run: sudo apt install nuget
       shell: bash
     - name: Check version
+      if: ${{ inputs.package_name != '' }}
       run: ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }}
       shell: bash
 
