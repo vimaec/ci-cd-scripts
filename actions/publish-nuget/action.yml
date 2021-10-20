@@ -4,6 +4,10 @@ inputs:
   project_path:
     description: 'The path to the .csproj file'
     required: true
+  test_project_path:
+    description: 'The path to the test .csproj file'
+    required: false
+    default: ''
   package_name:
     description: 'The project name used for publishing'
     required: true
@@ -21,6 +25,7 @@ runs:
       uses: ${{ inputs.root_path }}/actions/build-and-test
       with:
         project_path: ${{ inputs.project_path }}
+        test_project_path: ${{ inputs.test_project_path }}
         package_name: ${{ inputs.package_name }}
         root_path: ${{ inputs.root_path }}
 

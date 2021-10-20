@@ -4,6 +4,10 @@ inputs:
   project_path:
     description: 'The path to the .csproj file'
     required: true
+  test_project_path:
+    description: 'The path to the test .csproj file'
+    required: false
+    default: ''
   package_name:
     description: 'The project name used for publishing (for checking version uniqueness)'
     required: false
@@ -29,18 +33,22 @@ runs:
       shell: bash
     - name: Check version
       # composite actions don't support if-statements yet
-      run:  |
+      run: |
         ! [[ "${{ inputs.package_name }}" == "" ]] && \
         ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }} \
         || true
       shell: bash
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ inputs.project_path }}
       shell: bash
     - name: Build
-      run: dotnet build -c Release --no-restore
+      run: dotnet build -c Release --no-restore ${{ inputs.project_path }}
       shell: bash
     - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal
+      # composite actions don't support if-statements yet
+      run: |
+        ! [[ "${{ inputs.test_project_path }}" == "" ]] && \
+        dotnet test -c Release --no-build --verbosity normal ${{ inputs.test_project_path }} \
+        || true
       shell: bash
