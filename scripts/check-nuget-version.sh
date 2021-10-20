@@ -14,6 +14,11 @@ if ! [ $? == 0 ]; then
     exit 3
 fi
 
+if [ "$ver" == "" ]; then
+    echo "Version not found."
+    exit 4
+fi
+
 echo "Project version is ${ver}. Checking NuGet versions..."
 
 versions=`nuget list -AllVersions -IncludeDelisted -NonInteractive PackageId:$2 | awk '{print $2}'`
