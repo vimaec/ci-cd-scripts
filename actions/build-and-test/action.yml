@@ -46,5 +46,5 @@ runs:
       run: dotnet build -c Release --no-restore ${{ inputs.project_path }}
       shell: bash
     - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal ${{ inputs.test_project_path }}
+      run: dotnet test -c Release --verbosity normal ${{ inputs.test_project_path }}
       shell: bash
