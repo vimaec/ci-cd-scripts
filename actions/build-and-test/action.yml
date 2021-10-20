@@ -49,6 +49,6 @@ runs:
       # composite actions don't support if-statements yet
       run: |
         ! [[ "${{ inputs.test_project_path }}" == "" ]] && \
-        dotnet test -c Release --verbosity normal ${{ inputs.test_project_path }} \
+        dotnet test -c Release ${{ inputs.test_project_path }} \
         || true
       shell: bash
