@@ -46,5 +46,9 @@ runs:
       run: dotnet build -c Release --no-restore ${{ inputs.project_path }}
       shell: bash
     - name: Test
-      run: dotnet test -c Release --verbosity normal ${{ inputs.test_project_path }}
+      # composite actions don't support if-statements yet
+      run: |
+        ! [[ "${{ inputs.test_project_path }}" == "" ]] && \
+        dotnet test -c Release --verbosity normal ${{ inputs.test_project_path }} \
+        || true
       shell: bash
