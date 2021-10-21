@@ -17,7 +17,7 @@ inputs:
   root_path:
     description: 'The root path where this repository is checked out'
     required: false
-    default: "."
+    default: '.'
 runs:
   using: "composite"
   steps:
@@ -30,7 +30,7 @@ runs:
         root_path: ${{ inputs.root_path }}
 
     - name: Pack NuGet package
-      run: nuget pack { inputs.project_path }} -Symbols -SymbolPackageFormat snupkg -OutputDirectory . -NonInteractive -Properties Configuration=Release -Exclude *.tt
+      run: nuget pack ${{ inputs.project_path }} -Symbols -SymbolPackageFormat snupkg -OutputDirectory . -NonInteractive -Properties Configuration=Release -Exclude *.tt
       shell: bash
     - name: Push NuGet package
       run: nuget push ${{ inputs.package_name }}*.nupkg -ApiKey ${{ inputs.api_key }} -Source https://api.nuget.org/v3/index.json
