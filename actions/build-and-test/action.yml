@@ -25,11 +25,7 @@ runs:
         dotnet-version: 5.0.x
 
     - name: Install additional tools
-      # composite actions don't support if-statements yet
-      run: |
-        ! [[ "${{ inputs.package_name }}" == "" ]] && \
-        sudo apt install nuget \
-        || true
+      run: sudo apt install nuget
       shell: bash
     - name: Check version
       # composite actions don't support if-statements yet
