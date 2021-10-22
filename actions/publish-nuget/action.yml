@@ -53,9 +53,6 @@ runs:
     - name: Push NuGet package
       run: nuget push ${{ inputs.package_name }}*.nupkg -ApiKey ${{ inputs.api_key }} -Source https://api.nuget.org/v3/index.json
       shell: bash
-    - name: Push symbols
-      run: nuget push ${{ inputs.package_name }}*.snupkg -ApiKey ${{ inputs.api_key }} -Source https://api.nuget.org/v3/index.json
-      shell: bash
 
     - name: Tag commit
       run: ${{ inputs.root_path }}/scripts/tag-commit.sh ${{ inputs.project_path }}
