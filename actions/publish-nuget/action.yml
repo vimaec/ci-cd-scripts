@@ -21,13 +21,31 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Build and Test
-      uses: ./actions/build-and-test
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
       with:
-        project_path: ${{ inputs.project_path }}
-        test_project_path: ${{ inputs.test_project_path }}
-        package_name: ${{ inputs.package_name }}
-        root_path: ${{ inputs.root_path }}
+        dotnet-version: 5.0.x
+
+    - name: Install additional tools
+      run: sudo apt install nuget
+      shell: bash
+    - name: Check version
+      # composite actions don't support if-statements yet
+      run: |
+        ! [[ "${{ inputs.package_name }}" == "" ]] && \
+        ${{ inputs.root_path }}/scripts/check-nuget-version.sh ${{ inputs.project_path }} ${{ inputs.package_name }} \
+        || true
+      shell: bash
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ inputs.project_path }}
+      shell: bash
+    - name: Build
+      run: dotnet build -c Release --no-restore ${{ inputs.project_path }}
+      shell: bash
+    - name: Test
+      run: dotnet test -c Release ${{ inputs.test_project_path }}
+      shell: bash
 
     - name: Pack NuGet package
       run: nuget pack ${{ inputs.project_path }} -Symbols -SymbolPackageFormat snupkg -OutputDirectory . -NonInteractive -Properties Configuration=Release -Exclude *.tt
@@ -38,6 +56,7 @@ runs:
     - name: Push symbols
       run: nuget push ${{ inputs.package_name }}*.snupkg -ApiKey ${{ inputs.api_key }} -Source https://api.nuget.org/v3/index.json
       shell: bash
+
     - name: Tag commit
       run: ${{ inputs.root_path }}/scripts/tag-commit.sh ${{ inputs.project_path }}
       shell: bash
